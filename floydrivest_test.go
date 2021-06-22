@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestQuickselect(t *testing.T) {
+func TestFloydRivest(t *testing.T) {
 	type args struct {
 		list []int
 		k    int
@@ -42,14 +42,14 @@ func TestQuickselect(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Quickselect(tt.args.list, tt.args.k); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Quickselect() = %v, want %v", got, tt.want)
+			if got := FloydRivest(tt.args.list, tt.args.k); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FloydRivest() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func BenchmarkQuickselect(b *testing.B) {
+func BenchmarkFloydRivest(b *testing.B) {
 	benchmarks := []struct {
 		name    string
 		genFunc func(n int) []int
@@ -133,7 +133,7 @@ func BenchmarkQuickselect(b *testing.B) {
 		input := bm.genFunc(bm.n)
 		b.Run(bm.name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				Quickselect(input, bm.k)
+				FloydRivest(input, bm.k)
 			}
 		})
 	}

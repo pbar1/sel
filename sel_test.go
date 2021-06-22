@@ -1,55 +1,56 @@
 package sel
 
 import (
-	"reflect"
+	"sort"
 	"testing"
 )
 
-func TestQuickselect(t *testing.T) {
-	type args struct {
-		list []int
-		k    int
+// A random permutation of the integers 1 through n.
+func genSorted(n int) []int {
+	list := make([]int, n)
+	for i := 0; i < n; i++ {
+		list[i] = i + 1
 	}
-	tests := []struct {
-		name string
-		args args
-		want []int
-	}{
-		{
-			"Ascending",
-			args{
-				list: []int{0, 1, 2},
-				k:    0,
-			},
-			[]int{0},
-		},
-		{
-			"Descending",
-			args{
-				list: []int{2, 1, 0},
-				k:    0,
-			},
-			[]int{0},
-		},
-		{
-			"Random",
-			args{
-				list: []int{21, 2, 11, 14, 5},
-				k:    1,
-			},
-			[]int{2, 5},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := Quickselect(tt.args.list, tt.args.k); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Quickselect() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	return list
 }
 
-func BenchmarkQuickselect(b *testing.B) {
+// A random permutation of the integers 1 through n.
+func genRandom(n int) []int {
+	list := genSorted(n)
+	RNG.Shuffle(n, func(i, j int) {
+		list[i], list[j] = list[j], list[i]
+	})
+	return list
+}
+
+// A random permutation ceil(n/2) ones and floor(n/2) zeros.
+func genOnezero(n int) []int {
+	list := make([]int, n)
+	for i := 0; i < n; i++ {
+		list[i] = (i + 1) % 2
+	}
+	RNG.Shuffle(n, func(i, j int) {
+		list[i], list[j] = list[j], list[i]
+	})
+	return list
+}
+
+// A sorted sequence rotated left once; i.e., (2,3,...,n,1).
+func genRotated(n int) []int {
+	list := make([]int, n)
+	for i := 0; i < n-1; i++ {
+		list[i] = i + 2
+	}
+	list[n-1] = 1
+	return list
+}
+
+// TODO: Organpipe
+
+// TODO: m3killer
+
+// BenchmarkSort is here as a control
+func BenchmarkSort(b *testing.B) {
 	benchmarks := []struct {
 		name    string
 		genFunc func(n int) []int
@@ -133,7 +134,7 @@ func BenchmarkQuickselect(b *testing.B) {
 		input := bm.genFunc(bm.n)
 		b.Run(bm.name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				Quickselect(input, bm.k)
+				sort.Ints(input)
 			}
 		})
 	}

@@ -1,14 +1,5 @@
 package sel
 
-import (
-	"math/rand"
-	"time"
-)
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
 // Quickselect finds the kth smallest element in an unordered list of ints.
 // Also known as **FIND** and **Hoare's selection algorithm**.
 func Quickselect(list []int, k int) []int {
@@ -26,7 +17,7 @@ func quickselect(
 		}
 
 		// Choose a random pivot between left and right
-		pivotIndex := rand.Intn(right-left) + left
+		pivotIndex := RNG.Intn(right-left) + left
 
 		// pivotIndex = partitionLomuto(list, left, right, pivotIndex)
 		pivotIndex = partition(list, left, right, pivotIndex)
