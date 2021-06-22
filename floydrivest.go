@@ -5,8 +5,8 @@ import (
 )
 
 // FloydRivest finds the kth smallest element in an unordered list of ints.
-// Also known as **SELECT**.
-func FloydRivest(list []int, k int) []int {
+// Also known as SELECT.
+func FloydRivest(list []int, k int) int {
 	return floydrivest(list, 0, len(list)-1, k)
 }
 
@@ -14,7 +14,7 @@ func FloydRivest(list []int, k int) []int {
 // Also: https://core.ac.uk/download/pdf/82672439.pdf
 // Also: https://github.com/gliese1337/floyd-rivest/blob/master/src/floyd-rivest.ts
 // TODO: according to the above stackoverflow post, the Wikipedia algorithm isn't optimal
-func floydrivest(list []int, left, right, k int) []int {
+func floydrivest(list []int, left, right, k int) int {
 	for right > left {
 		if right-left > 600 {
 			n := right - left + 1
@@ -69,7 +69,7 @@ func floydrivest(list []int, left, right, k int) []int {
 		}
 	}
 
-	return list[:k+1]
+	return list[k]
 }
 
 func sign(x int) int {
