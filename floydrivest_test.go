@@ -20,9 +20,10 @@ func BenchmarkFloydRivest(b *testing.B) {
 		for _, n := range ns {
 			input := bm.genFunc(n)
 			name := fmt.Sprintf("%s/%d", bm.name, n)
+			k := n / 2
 			b.Run(name, func(b *testing.B) {
 				for i := 0; i < b.N; i++ {
-					FloydRivest(input, bm.k)
+					FloydRivest(input, k)
 				}
 			})
 		}
