@@ -1,19 +1,39 @@
 package sel
 
+import "reflect"
+
 // Quickselect finds the kth smallest element in an unordered list of ints.
 // Also known as FIND, or Hoare's selection algorithm.
-func Quickselect(list []int, k int) int {
-	return quickselect(list, 0, len(list)-1, k, partitionHoare)
+func Quickselect(list Interface, k int) interface{} {
+	resultIndex := quickselectIndex(list, 0, list.Len()-1, k, partitionHoare)
+	switch reflect.TypeOf(list).Kind() {
+	case reflect.Slice:
+		s := reflect.ValueOf(list)
+		return s.Index(resultIndex).Interface()
+	}
+	return nil
 }
 
-func quickselect(
-	list []int,
+func QuickselectInts(list []int, k int) int {
+	result := Quickselect(IntList(list), k)
+	return result.(int)
+}
+
+func QuickselectStrings(list []string, k int) string {
+	result := Quickselect(StringList(list), k)
+	return result.(string)
+}
+
+// quickselectIndex performs quickselect on the list, mutating it in the process,
+// and returns the resulting index at which the kth smallest element resides.
+func quickselectIndex(
+	list Interface,
 	left, right, k int,
-	partition func(list []int, left, right, pivotIndex int) int,
+	partition func(list Interface, left, right, pivotIndex int) int,
 ) int {
 	for {
 		if left == right {
-			return list[left]
+			return k
 		}
 
 		// Choose a random pivot between left and right
@@ -23,7 +43,7 @@ func quickselect(
 		pivotIndex = partition(list, left, right, pivotIndex)
 
 		if k == pivotIndex {
-			return list[k]
+			return k
 		} else if k < pivotIndex {
 			right = pivotIndex - 1
 		} else {
@@ -34,20 +54,18 @@ func quickselect(
 
 // partitionHoare is Hoare's original partition scheme.
 // See: https://en.wikipedia.org/wiki/Quicksort#Hoare_partition_scheme
-func partitionHoare(list []int, left, right, pivotIndex int) int {
-	pivot := list[pivotIndex]
-
+func partitionHoare(list Interface, left, right, pivotIndex int) int {
 	for i, j := left-1, right+1; ; {
 
 		// Find leftmost element greater than or equal to pivot
 		i++
-		for list[i] < pivot {
+		for list.Less(i, pivotIndex) {
 			i++
 		}
 
 		// Find rightmost element less than or equal to pivot
 		j--
-		for list[j] > pivot {
+		for list.Greater(j, pivotIndex) {
 			j--
 		}
 
@@ -57,27 +75,26 @@ func partitionHoare(list []int, left, right, pivotIndex int) int {
 		}
 
 		// Swap the values at each pointer
-		list[i], list[j] = list[j], list[i]
+		list.Swap(i, j)
 	}
 }
 
 // partitionLomuto is Lomuto's simplified partition scheme.
-func partitionLomuto(list []int, left, right, pivotIndex int) int {
-	pivot := list[pivotIndex]
+func partitionLomuto(list Interface, left, right, pivotIndex int) int {
 
 	// Swap pivot to the end
-	list[pivotIndex], list[right] = list[right], list[pivotIndex]
+	list.Swap(pivotIndex, right)
 
 	storeIndex := left
 	for i := left; i <= right-1; i++ {
-		if list[i] < pivot {
-			list[storeIndex], list[i] = list[i], list[storeIndex]
+		if list.Less(i, pivotIndex) {
+			list.Swap(storeIndex, i)
 			storeIndex++
 		}
 	}
 
 	// Swap pivot into its final position
-	list[right], list[storeIndex] = list[storeIndex], list[right]
+	list.Swap(right, storeIndex)
 
 	return storeIndex
 }

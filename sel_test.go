@@ -1,11 +1,5 @@
 package sel
 
-import (
-	"fmt"
-	"sort"
-	"testing"
-)
-
 type args struct {
 	list []int
 	k    int
@@ -39,20 +33,20 @@ var (
 	}
 )
 
-// BenchmarkSort is here as a control
-func BenchmarkSort(b *testing.B) {
-	for _, bm := range benchmarks {
-		for _, n := range ns {
-			input := bm.genFunc(n)
-			name := fmt.Sprintf("%s/%d", bm.name, n)
-			b.Run(name, func(b *testing.B) {
-				for i := 0; i < b.N; i++ {
-					sort.Ints(input)
-				}
-			})
-		}
-	}
-}
+// // BenchmarkSort is here as a control
+// func BenchmarkSort(b *testing.B) {
+// 	for _, bm := range benchmarks {
+// 		for _, n := range ns {
+// 			input := bm.genFunc(n)
+// 			name := fmt.Sprintf("%s/%d", bm.name, n)
+// 			b.Run(name, func(b *testing.B) {
+// 				for i := 0; i < b.N; i++ {
+// 					sort.Ints(input)
+// 				}
+// 			})
+// 		}
+// 	}
+// }
 
 func doubleRange(from, to int) []int {
 	list := make([]int, 0)
